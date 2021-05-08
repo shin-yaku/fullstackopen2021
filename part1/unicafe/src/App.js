@@ -38,7 +38,7 @@ const App = () => {
       <Statistics label="bad" value={bad} />
       <Statistics label="all" value={all} />
       <Statistics label="average" value={average} />
-      <Statistics label="positive" value={positive * 100 + " %"} />
+      <Statistics label="positive" value={positive * 100 + " %"} /> {/* 数字と文字列を足し合わせるのはこれでいいのだろうか */}
     </div>
   )
 }
