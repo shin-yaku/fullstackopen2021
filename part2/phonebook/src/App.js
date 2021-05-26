@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
-const Person = ({ person }) => {
+const Person = ({ person, deleteFunc}) => {
+  console.log(deleteFunc)
   return (
-    <li>{person.name} {person.number}</li>
+    <li>{person.name} {person.number} <button onClick={() => deleteFunc(person.id)}>delete</button></li>
+    // <li>{person.name} {person.number} <button>delete</button></li>
   )
 }
 
@@ -31,11 +33,11 @@ const PersonForm = (props) => {
 }
 
 const Persons = (props) => {
-  const {persons} = props
+  const {persons, deleteFunc} = props
   return (
       <ul>
         {persons.map(person =>
-          <Person key={person.name} person={person} />
+          <Person key={person.name} person={person} deleteFunc={deleteFunc}/>
         )}
       </ul>
   )
@@ -48,12 +50,7 @@ const App = () => {
 
   const hook = () => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
+    personService.getAll().then(persons => setPersons(persons))
   }
   useEffect(hook, [])
   console.log('render', persons.length, 'persons')
@@ -69,9 +66,14 @@ const App = () => {
     if (persons.map(p => p.name).includes(newName)) {
       window.alert(`${newName} is already added to phonebook`)
     } else {
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+            setPersons(persons.concat(returnedPerson))
+            setNewName('')
+            setNewNumber('')
+        }
+      )
     }
   }
 
@@ -82,6 +84,8 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const deleteFunc = personService.deletePerson
+  
   return (
     <div>
       <h2>Phonebook</h2>
@@ -98,7 +102,7 @@ const App = () => {
 
       <h2>Numbers</h2>
 
-      <Persons persons={persons}/>
+      <Persons persons={persons} deleteFunc={deleteFunc}/>
     </div>
   )
 }
