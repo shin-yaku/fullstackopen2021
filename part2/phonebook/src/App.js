@@ -4,8 +4,7 @@ import personService from './services/persons'
 const Person = ({ person, deleteFunc}) => {
   console.log(deleteFunc)
   return (
-    <li>{person.name} {person.number} <button onClick={() => deleteFunc(person.id)}>delete</button></li>
-    // <li>{person.name} {person.number} <button>delete</button></li>
+    <li>{person.name} {person.number} <button onClick={() => deleteFunc(person)}>delete</button></li>
   )
 }
 
@@ -84,7 +83,14 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const deleteFunc = personService.deletePerson
+  const deleteFunc = person => {
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      personService.deletePerson(person.id)
+      const newPersons = persons.filter(p => p.id != person.id)
+
+      setPersons(newPersons)
+    }  
+  }
   
   return (
     <div>
