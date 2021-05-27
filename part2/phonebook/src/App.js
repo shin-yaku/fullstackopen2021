@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  const errorStyle =  {
+    color: "green",
+    background: "lightgrey",
+    fontSize: 20,
+    borderStyle: "solid",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  }
+
+  return (
+    <div style={errorStyle}>
+      {message}
+    </div>
+  )
+}
+
 const Person = ({ person, deleteFunc}) => {
   console.log(deleteFunc)
   return (
@@ -46,6 +68,7 @@ const App = () => {
   const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
+  const [ errorMessage, setErrorMessage ] = useState('')
 
   const hook = () => {
     console.log('effect')
@@ -71,6 +94,13 @@ const App = () => {
             setPersons(persons.concat(returnedPerson))
             setNewName('')
             setNewNumber('')
+
+            setErrorMessage(
+              `Added '${returnedPerson.name}'`
+            )
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
         }
       )
     }
@@ -95,6 +125,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={errorMessage} />
 
       <h3>Add a new</h3>
 
